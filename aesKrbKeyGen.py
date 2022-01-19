@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
-from Crypto.Util.Padding import unpad
 import argparse
 
 
