@@ -31,7 +31,7 @@ def do_aes_128(aes_128_pbkdf2):
 def main():
     parser = argparse.ArgumentParser(description='Generate AES128/256 Kerberos keys for an AD account using a plaintext password', formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-domain', type=str, help='FQDN', required=True)
-    parser.add_argument('-user', type=str, help='Username - this is case sensitive for AD user accounts', required=True)
+    parser.add_argument('-user', type=str, help='sAMAccountName - this is case sensitive for AD user accounts', required=True)
     parser.add_argument('-pass', type=str, dest='password', help='Valid cleartext account password', required=True)
     parser.add_argument('-host', action='store_true', help='Target is a computer account', required=False)
 
