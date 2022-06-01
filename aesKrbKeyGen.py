@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from Crypto.Cipher import AES
 from Crypto.Protocol import KDF
+from binascii import unhexlify
 import argparse
 
 
@@ -32,7 +33,7 @@ def main():
     parser = argparse.ArgumentParser(description='Generate AES128/256 Kerberos keys for an AD account using a plaintext password', formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-domain', type=str, help='FQDN', required=True)
     parser.add_argument('-user', type=str, help='sAMAccountName - this is case sensitive for AD user accounts', required=True)
-    parser.add_argument('-pass', type=str, dest='password', help='Valid cleartext account password', required=True)
+    parser.add_argument('-pass', type=str, dest='password', help='Valid cleartext or hex account password', required=True)
     parser.add_argument('-host', action='store_true', help='Target is a computer account', required=False)
 
     args = parser.parse_args()
@@ -40,13 +41,17 @@ def main():
     domain = args.domain.upper()
     if args.host:
         host = args.user.replace('$', '') # ensure $ is not present in hostname
-        salt = f'{domain}host{host}.{domain.lower()}'
+        salt = f'{domain}host{host.lower()}.{domain.lower()}'
     else:
         salt = f'{domain}{args.user}'
 
     print(f'[*] Salt: {salt}')    
+    
+    try:
+        password_bytes = unhexlify(args.password).decode('utf-16-le', 'replace').encode('utf-8', 'replace')
+    except:
+        password_bytes = args.password.encode('utf-8')
 
-    password_bytes = args.password.encode('utf-8')
     salt_bytes = salt.encode('utf-8')
 
     aes_256_pbkdf2 = KDF.PBKDF2(password_bytes, salt_bytes, 32, ITERATION)
